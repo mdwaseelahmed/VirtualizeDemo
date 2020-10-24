@@ -1,0 +1,49 @@
+﻿@page "/fetchdata"
+
+@using VirtualizeDemo.Data
+@inject WeatherForecastService ForecastService
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (weatherForecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            <Virtualize Items="weatherForecasts" Context="forecast" OverscanCount="70">
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            </Virtualize>
+        </tbody>
+    </table>
+}
+
+@code {
+    List<WeatherForecast> weatherForecasts = new List<WeatherForecast>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        //Put some extra data
+        for (int i = 0; i < 100; i++)
+        {
+            weatherForecasts.AddRange(await ForecastService.GetForecastAsync(DateTime.Now));
+        }
+    }
+}
